@@ -1,3 +1,11 @@
+/*
+ * fogLoader, an ajax modal loader supporting jQuery UI themes
+ * by Corbin Camp - ccamp@onebox.com @corbincamp
+ * Version 1.0.0
+ * Created 2010
+ * License: GPL
+ * 
+ */
 (function ($) {
     var _progval = 0;
     var _interval;
