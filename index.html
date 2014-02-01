@@ -1,22 +1,76 @@
 <!DOCTYPE html>
 <html>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-   <script src="jquery.fogLoader.1.0.0.js" type="text/javascript"></script>
-   <link href="css/jquery.theme.css" type="text/css" rel="stylesheet" />
-   <body>
-      <div id="loader"></div>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>fogLoader </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="jquery.fogLoader.1.0.0.js" type="text/javascript"></script>
+    <link href="css/jquery.theme.css" type="text/css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="loader"></div>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>fogLoader</h1>
+          <h2>Ajax loader for jQuery utilizing themes</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Turgeson/fogLoader/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Turgeson/fogLoader/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Turgeson/fogLoader" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <p>fogLoader is an easy to use modal ajax loader that works with your existing jQuery theme</p>
+          <p>
+             You will need a reference to jQuery 1.10 and jQueryUI 1.10.3, plus your theme.
+          </p>
+          <p>
+            Simply add a single div and you are all set
+            <code>
+              &lt;div id="myLoader"&gt;&lt;/div&gt;
+            </code>
+          </p>
+          <h3>Demo</h3>
+          
       <div>
          <button onclick="runLoader()">Basic</button>
          <button onclick="runLoader('message')">Custom Message</button>
          <button onclick="runLoader('animated')">Animated</button>
          <button onclick="runLoader('animessage')">Animated Custom</button>
+         <br />
          <button onclick="runLoader('spelling')">Spelling</button>
          <button onclick="runLoader('cusspelling')">Custom Spelling</button>
          <button onclick="runLoader('progressbar')">Progress Bar</button>
          <button onclick="runLoader('busy')">Busy Bar</button>
       </div>
-   <body>
+        </section>
+        <div id="Basic">
+          <code>
+              $('#myLoader').fogLoader();
+          </code>
+        </div>
+        <footer>
+          fogLoader is maintained by <a href="https://github.com/Turgeson">Turgeson</a><br>
+        </footer>
+    </div>
+    </div>
+  </body>
    <script type="text/javascript">
       
       var _interval;
