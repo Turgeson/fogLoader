@@ -13,31 +13,32 @@
             minHeight: 15,
             minWidth: 20,
             position: 'center',
-            width: 130,
+            width: 135,
             textAlign: 'center',
             wrapText: 'nowrap',
-            fontSize: '1em',
+            fontSize: null,
             fontFamily: null,
-            fontWeight: 'normal',
+            fontWeight: null,
             borderRadius: null,
             borderWidth: '1px',
+            spell: false,
             style: 'message',
             progressMax: 10,
-            progressChar: '.',
-            progressSpell: false,
+            activityChar: '.',
             progressDelay: 250,
-            progressValue: 0
+            progressValue: 0,
+            progressMessage: null
         };
-        var settings = null; 
+        var stgs = null; 
         var spelllen = 1;
         var methods = {
             close: function () {
-                $('.ui-progressbar').remove();
+                $('.ui-progressbar, .ui-progressbar-msg').remove();
                 clearInterval(_interval);
                 $(this).dialog('close')
             },
             destroy: function () {
-                $('.ui-progressbar').remove();
+                $('.ui-progressbar, .ui-progressbar-msg').remove();
                 clearInterval(_interval);
                 $(this).dialog('destroy')
             },
@@ -49,7 +50,7 @@
             }
         };
         if (typeof opts === 'object' || !opts) {
-            settings = $.extend({}, defaults, opts)
+            stgs = $.extend({}, defaults, opts)
         } else {
             if (methods[opts]) {
                 return methods[opts].apply(this, Array.prototype.slice.call(arguments, 1))
@@ -57,22 +58,25 @@
                 $.error('_method ' + opts + ' does not exist on jQuery.fogLoader')
             }
         };
-        function fillProgressBar(val) {
-            _progval = val;
+        function fillProgressBar(args) {
+            _progval = args.val;
+            if(args.msg){
+                $('.ui-progressbar-msg').html(args.msg);
+            }
             $('.ui-progressbar-value').css('width', _progval  + '%').show();
         }
         $(this).each(function () {
             var dlg = '#ui-dialog-title-' + $(this).attr('id');
             var msg;
-            if (settings.style == 'message') {
-                if (settings.animated) {
-                    if (settings.progressSpell) {
-                        msg = settings.message.substring(0, 1);
+            if (stgs.style == 'message') {
+                if (stgs.animated) {
+                    if (stgs.progressSpell) {
+                        msg = stgs.message.substring(0, 1);
                     } else {
-                        msg = settings.message;
+                        msg = stgs.message;
                     }
                 } else {
-                    msg = settings.message + '...';
+                    msg = stgs.message + '...';
                 }
             }
             $(this).dialog({
@@ -80,14 +84,14 @@
                 resizable: false,
                 closeText: '',
                 draggable: false,
-                closeOnEscape: settings.closeOnEscape,
-                height: settings.height,
-                width: settings.width,
-                maxHeight: settings.maxHeight,
-                minHeight: settings.minHeight,
-                maxWidth: settings.maxWidth,
-                minWidth: settings.minWidth,
-                position: settings.position,
+                closeOnEscape: stgs.closeOnEscape,
+                height: stgs.height,
+                width: stgs.width,
+                maxHeight: stgs.maxHeight,
+                minHeight: stgs.minHeight,
+                maxWidth: stgs.maxWidth,
+                minWidth: stgs.minWidth,
+                position: stgs.position,
                 title: msg,
                 beforeclose: function (a, b) {
                     $('#ui-dialog-title-loader-progressbar').remove();
@@ -95,75 +99,67 @@
                     $(this).dialog('destroy')
                 }
             });
-            $('.ui-dialog-titlebar')
-                .show()
-                .addClass('ui-state-default').removeClass('ui-widget-header')
-                .css({fontSize: settings.fontSize,
-                      fontWeight: settings.fontWeight,
-                      whiteSpace: settings.wrapText,
-                      'border-width': '0px'
-            });
-            if (settings.fontFamily != null) {
-                $('.ui-dialog-titlebar').css({fontFamily: settings.fontFamily});
-            }
+            var ttlbar = $('.ui-dialog-titlebar');
+            ttlbar.show().addClass('ui-state-default').removeClass('ui-widget-header').css({whiteSpace: stgs.wrapText,'border-width': '0px'});
+            // font overrides
+            if(stgs.fontSize){ttl.css({fontSize: stgs.fontSize});}
+            if(stgs.fontFamily) {ttl.css({fontFamily: stgs.fontFamily});}
+            if(stgs.fontWeight){ttlbar.css({fontWeight: stgs.fontWeight})}
             $('.ui-dialog-titlebar-close').remove();
-            $('.ui-dialog').css({
-                padding: '0',
-                borderWidth: settings.borderWidth
-            });
-            if (settings.borderRadius) {
-                $('.ui-dialog, .ui-dialog-titlebar').css({
-                    '-moz-border-radius': settings.borderRadius,
-                    '-webkit-border-radius': settings.borderRadius
-                });
+            $('.ui-dialog').css({padding: '0',borderWidth: stgs.borderWidth});
+            if (stgs.borderRadius) {
+                $('.ui-dialog, .ui-dialog-titlebar').css({'-moz-border-radius': stgs.borderRadius,'-webkit-border-radius': stgs.borderRadius });
             };
-            if (settings.style == 'progressbar') {
-                var pbar = $('<div>').attr('id', dlg + '-' + settings.style)
-                                     .css('height', (settings.height -5) + 'px')
-                                     .progressbar({value: settings.progressValue, max: settings.progressMax})
+            if (stgs.style == 'progressbar') {
+                var pbar = $('<div>').attr('id', dlg + '-' + stgs.style)
+                                     .css('height', (stgs.height -5) + 'px')
+                                     .progressbar({value: stgs.progressValue, max: stgs.progressMax})
                 var pbarval = $('.ui-progressbar-value');
-                _progressParams = {val: settings.progressValue, max: settings.progressMax};
-                $('.ui-dialog-titlebar').hide();
-                $(this).css({height: 'auto',
-                             padding: 1,
-                             overflow: 'hidden'})
-                        .append(pbar);
+                ttlbar.hide();
+                $(this).css({height: 'auto', padding: 1, overflow: 'hidden'})
+                if(stgs.progressMessage){
+                    $(this).append($('<span>').addClass('ui-progressbar-msg').html(stgs.progressMessage).css({margin: '1px', fontSize: '.75em'}));
+                }
+                $(this).append(pbar);
                 pbarval.css('margin', '-2px');
                 if (!$.support.htmlSerialize){
-                    pbarval.css('height', (settings.height + 5) + 'px')
+                    pbarval.css('height', (stgs.height + 5) + 'px')
                 }
                 $('.ui-dialog .ui-widget-content').css('border-width', '0px');
-                if(settings.progressValue != false){
-                    fillProgressBar(settings.progressValue);
+                if(stgs.progressValue != false){
+                    fillProgressBar(stgs.progressValue);
                 }
             }else{
                 $(this).hide();
             }
-            if (settings.animated && settings.style != 'progressbar') {
-                settings.progressMax = settings.message.length + 3;
+            if (stgs.animated && stgs.style != 'progressbar') {
+                stgs.progressMax = stgs.message.length + 3;
+                if(stgs.spell){
+                    $('.ui-dialog-title').html(stgs.message.substring(0,1));
+                }
                 _interval = setInterval(function () {
                     var spellmsg = $('.ui-dialog-title').html();
                     if (!spellmsg) {
-                        clearInterval($(this).data('progress-interval'));
+                        clearInterval(_interval);
                     } else {
-                        if (spellmsg.length < (settings.message.length + (settings.progressMax - settings.message.length))) {
-                            if (settings.progressSpell && settings.animated) {
-                                if (spelllen < settings.message.length) {
-                                    spellmsg += settings.message.substring(spelllen, spelllen+1);
+                        if (spellmsg.length < (stgs.message.length + (stgs.progressMax - stgs.message.length))) {
+                            if (stgs.spell && stgs.animated) {
+                                if (spelllen < stgs.message.length) {
+                                    spellmsg += stgs.message.substring(spelllen, spelllen+1);
                                 } else {
-                                    spellmsg += settings.progressChar;
+                                    spellmsg += stgs.activityChar;
                                 }
                                 spelllen++;
                             } else {
-                                spellmsg += settings.progressChar;
+                                spellmsg += stgs.activityChar;
                             }
                         } else {
                             spelllen = 1;
-                            spellmsg = settings.progressSpell ? settings.message.substring(0, 1) : settings.message;
+                            spellmsg = stgs.spell ? stgs.message.substring(0, 1) : stgs.message;
                         }
                         $('.ui-dialog-title').html(spellmsg);
                     }
-                }, settings.progressDelay);
+                }, stgs.progressDelay);
             };
             $('.ui-widget-overlay').css('position', 'fixed');
         })
