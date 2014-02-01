@@ -7,14 +7,22 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link href="theme/jquery.theme.css" type="text/css" rel="stylesheet" />
+    <link href="prism.css" type="text/css" rel="stylesheet" />
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <title>fogLoader </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="jquery.themeswitcher.min.js"></script>
     <script src="jquery.fogLoader.1.0.0.js" type="text/javascript"></script>
-    <link href="theme/jquery.theme.css" type="text/css" rel="stylesheet" />
+    <style>
+      #switcher li{
+        list-style: none !important;
+      }
+      
+    </style>
   </head>
 
   <body>
@@ -32,46 +40,141 @@
           <a href="https://github.com/Turgeson/fogLoader/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
           <a href="https://github.com/Turgeson/fogLoader" id="view-on-github" class="button"><span>View on GitHub</span></a>
         </section>
-
-        <hr>
-
+      <hr>
         <section id="main_content">
           <p>fogLoader is an easy to use modal ajax loader that works with your existing jQuery theme</p>
           <p>
              You will need a reference to jQuery 1.10 and jQueryUI 1.10.3, plus your theme.
           </p>
           <p>
-            Simply add a single div and you are all set
+            Add a div prefereably at the top of your HTML page. Instantiate fogLoader inside an event
+            <br />
             <code>
               &lt;div id="myLoader"&gt;&lt;/div&gt;
             </code>
+            <div id="switcher"></div>
           </p>
           <h3>Demo</h3>
-          
       <div>
-         <button onclick="runLoader()">Basic</button>
-         <button onclick="runLoader('message')">Custom Message</button>
-         <button onclick="runLoader('animated')">Animated</button>
-         <button onclick="runLoader('animessage')">Animated Custom</button>
-         <br />
-         <button onclick="runLoader('spelling')">Spelling</button>
-         <button onclick="runLoader('cusspelling')">Custom Spelling</button>
-         <button onclick="runLoader('progressbar')">Progress Bar</button>
-         <button onclick="runLoader('busy')">Busy Bar</button>
+        <div id="tabs">
+          <ul>
+            <li><a href="#basic-tab">Static</a></li>
+            <li><a href="#animated-tab">Animated</a></li>
+            <li><a href="#spelling-tab">Spelling</a></li>
+            <li><a href="#progress-tab">Progress</a></li>
+          </ul>
+          <div id="basic-tab">
+              <div>
+                <button class="ui-button" onclick="runLoader()">Basic</button>
+                <br />
+                <pre class="language-javascript"><code id="basicMessage">$('#myLoader').fogLoader();</code></pre>
+              </div>
+              <div>
+                <button class="ui-button" onclick="runLoader('message')">Custom Message</button>
+                <br />
+                <pre class="language-javascript"><code id="customMessage">$('#myloader').fogLoader({
+  message: 'Please Wait',
+  width: 170 // override the default width if your text is long
+});</code></pre>
+              </div>
+          </div>
+          <div id="animated-tab">
+            <div>
+              <button class="ui-button" onclick="runLoader('animated')">Basic</button>
+              <br />
+              <pre class="language-javascript"><code id="basicMessage">$('#myLoader').fogLoader({
+  animated: true
+});</code></pre>
+            </div>
+            <div>
+              <button class="ui-button" onclick="runLoader('animessage')">Custom Message</button>
+              <pre><code class="language-javascript">$('#myLoader').fogLoader({
+  message: 'Working',
+  width: 150,
+  animated: true
+});</code></pre></div>
+          </div>
+          <div id="spelling-tab">
+              <button class="ui-button" onclick="runLoader('spelling')">Spelling</button>
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  spell: true
+});</code></pre>
+              <button class="ui-button" onclick="runLoader('cusspelling')">Custom Spelling</button>
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  animated: true,
+  spell: true,
+  message: 'Working'
+});</code></pre>
+          </div>
+          <div id="progress-tab">
+            <div>
+              <button class="ui-button" onclick="runLoader('progressbar')">Progress Bar</button>
+              <br />
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  style: 'progressbar'
+});
+// this could also be put inside an ajax callback
+myintervalid = setInterval(function() {
+  $('#myLoader').fogLoader('updateProgress', myprogresscounter);
+  myprogresscounter++;
+  if($('#myLoader').fogLoader('progressValue') >= 100){
+    $('#myLoader').fogLoader('close');
+    clearInterval(myintervalid);
+    myprogresscounter = 1;
+    }
+}, 50);</code></pre>
+            </div>
+            <div>
+              <button class="ui-button" onclick="runLoader('progressmsg');">Progress Message</button>
+              <br/>
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  style: 'progressbar',
+  progressMessage: 'Saving item' + myprogresscounter + ' to the cloud'
+});
+// this could also be put inside an ajax callback
+myintervalid = setInterval(function() {
+  $('#myLoader').fogLoader('updateProgress',
+  {
+    val:myprogresscounter,
+    msg: 'Saving item'+myprogresscounter+ ' to the cloud'
+  });
+  myprogresscounter++;
+  if($('#myLoader').fogLoader('progressValue') >= 100){
+    $('#myLoader').fogLoader('close');
+    clearInterval(myintervalid);
+    myprogresscounter = 1;
+    }
+}, 50);</code></pre>
+            </div>
+            <div>
+              <button class="ui-button" onclick="runLoader('busy')">Busy Bar</button>
+              <br />
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  style: 'progressbar',
+  progressValue: false // set the progressValue to false.
+  //Same as the jQueryUI progressbar for indetermenate bars
+});</code></pre>
+            </div>
+
+          </div>
+         </div>
       </div>
         </section>
-        <div id="Basic">
-          <code>
-              $('#myLoader').fogLoader();
-          </code>
-        </div>
         <footer>
           fogLoader is maintained by <a href="https://github.com/Turgeson">Turgeson</a><br>
         </footer>
     </div>
     </div>
+    <script src="prism.js" data-default-language="markup"></script>
   </body>
+  
    <script type="text/javascript">
+      
+      $("#switcher").themeswitcher({
+    			imgpath: "images/",
+    			loadTheme: "UI Lightness"
+    		});
+      $('#tabs').tabs();
       
       var _interval;
       var _prog = 1;
@@ -105,14 +208,14 @@
                auto = true;
                $('#loader').fogLoader({
                      animated: true,
-                     progressSpell: true
+                     spell: true
                });
                break;
             case 'cusspelling':
                auto = true;
                $('#loader').fogLoader({
                      animated: true,
-                     progressSpell: true,
+                     spell: true,
                      message: 'Working'
                });
                break;
@@ -122,7 +225,23 @@
                   style: 'progressbar'
                });
                _interval = setInterval(function() {
-                              $('#loader').fogLoader('updateProgress', _prog);
+                              $('#loader').fogLoader('updateProgress', {val: _prog});
+                              _prog++;
+                              if($('#loader').fogLoader('progressValue') >= 100){
+                                 $('#loader').fogLoader('close');
+                                 clearInterval(_interval);
+                                 _prog = 1;
+                              }}, 50);
+               break;
+            case 'progressmsg':
+               auto = false;
+               $('#loader').fogLoader({
+                  style: 'progressbar',
+                  progressMessage: 'Saving Item'+ _prog + ' to the cloud',
+                  width: 250
+               });
+               _interval = setInterval(function() {
+                              $('#loader').fogLoader('updateProgress', {val: _prog, msg: 'Saving item'+_prog+' to the cloud' });
                               _prog++;
                               if($('#loader').fogLoader('progressValue') >= 100){
                                  $('#loader').fogLoader('close');

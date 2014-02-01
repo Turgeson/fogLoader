@@ -186,8 +186,8 @@ pre {
   overflow: auto;
 }
 pre code {
-  color: #f2f2f2;
-  background-color: #303030;
+  /*color: #f2f2f2;
+  background-color: #303030;*/
   border: none;
   padding: 0;
 }
