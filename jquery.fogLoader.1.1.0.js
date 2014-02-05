@@ -1,8 +1,8 @@
 /*
  * fogLoader, an ajax modal loader supporting jQuery UI themes
  * by Corbin Camp - ccamp@onebox.com @corbincamp
- * Version 1.0.0
- * Created 2010
+ * Version 1.1.0
+ * Created 2014
  * License: GPL
  * 
  */
@@ -15,46 +15,55 @@
             message: 'Loading',
             animated: false,
             closeOnEscape: true,
-            height: 25,
-            maxHeight: false,
-            maxWidth: false,
-            minHeight: 15,
-            minWidth: 20,
-            position: 'center',
             width: 135,
-            textAlign: 'center',
-            wrapText: 'nowrap',
-            fontSize: null,
-            fontFamily: null,
-            fontWeight: null,
-            borderRadius: null,
-            borderWidth: '1px',
+            height: 25,
+            maxWidth: false,
+            maxHeight: false,
+            minWidth: 20,
+            minHeight: 15,
+            position: 'center',
+            text: {
+                align: 'center',
+                wrap: 'nowrap'
+            },
+            font: {
+                family: null,
+                size: null,
+                weight: null
+            },
+            border: {
+                radius: null,
+                wdith: '1px'
+            },
             spell: false,
             style: 'message',
-            progressMax: 10,
             activityChar: '.',
-            progressDelay: 250,
-            progressValue: 0,
-            progressMessage: null
+            progress: {
+                val: 0,
+                max: 10,
+                text: null,
+                loc: 'inside',
+                shadow: false,
+                delay: 250}
         };
         var stgs = null; 
         var spelllen = 1;
         var methods = {
             close: function () {
-                $('.ui-progressbar, .ui-progressbar-msg').remove();
+                $('.ui-progressbar, .ui-progressbar-msg, .progress-label').remove();
                 clearInterval(_interval);
                 $(this).dialog('close')
             },
             destroy: function () {
-                $('.ui-progressbar, .ui-progressbar-msg').remove();
+                $('.ui-progressbar, .ui-progressbar-msg, .progress-label').remove();
                 clearInterval(_interval);
                 $(this).dialog('destroy')
             },
             progressValue: function(){
                 return _progval;
             },
-            updateProgress: function (step) {
-                fillProgressBar(step)
+            updateProgress: function (args) {
+                fillProgressBar(args)
             }
         };
         if (typeof opts === 'object' || !opts) {
@@ -67,11 +76,14 @@
             }
         };
         function fillProgressBar(args) {
-            _progval = args.val;
+            _progval = args.value;
             if(args.msg){
-                $('.ui-progressbar-msg').html(args.msg);
+                $('.progress-label').html(args.msg);
             }
             $('.ui-progressbar-value').css('width', _progval  + '%').show();
+            if(_progval >=100){
+                $('.ui-progressbar-value').css('width', '102%').addClass('ui-corner-all');
+            }
         }
         $(this).each(function () {
             var dlg = '#ui-dialog-title-' + $(this).attr('id');
@@ -108,40 +120,50 @@
                 }
             });
             var ttlbar = $('.ui-dialog-titlebar');
-            ttlbar.show().addClass('ui-state-default').removeClass('ui-widget-header').css({whiteSpace: stgs.wrapText,'border-width': '0px'});
+            ttlbar.show().addClass('ui-state-default').removeClass('ui-widget-header').css({whiteSpace: stgs.text.wrap,'border-width': '0px'});
             // font overrides
-            if(stgs.fontSize){ttl.css({fontSize: stgs.fontSize});}
-            if(stgs.fontFamily) {ttl.css({fontFamily: stgs.fontFamily});}
-            if(stgs.fontWeight){ttlbar.css({fontWeight: stgs.fontWeight})}
+            if(stgs.fontSize){ttl.css({fontSize: stgs.font.size});}
+            if(stgs.fontFamily) {ttl.css({fontFamily: stgs.font.family});}
+            if(stgs.fontWeight){ttlbar.css({fontWeight: stgs.font.weight})}
             $('.ui-dialog-titlebar-close').remove();
-            $('.ui-dialog').css({padding: '0',borderWidth: stgs.borderWidth});
-            if (stgs.borderRadius) {
-                $('.ui-dialog, .ui-dialog-titlebar').css({'-moz-border-radius': stgs.borderRadius,'-webkit-border-radius': stgs.borderRadius });
+            $('.ui-dialog').css({padding: '0',borderWidth: stgs.border.width});
+            if (stgs.border.radius) {
+                $('.ui-dialog, .ui-dialog-titlebar').css({'-moz-border-radius': stgs.border.radius,'-webkit-border-radius': stgs.border.radius });
             };
             if (stgs.style == 'progressbar') {
                 var pbar = $('<div>').attr('id', dlg + '-' + stgs.style)
                                      .css('height', (stgs.height -5) + 'px')
-                                     .progressbar({value: stgs.progressValue, max: stgs.progressMax})
+                                     .progressbar({value: stgs.progress.value, max: stgs.progress.max})
                 var pbarval = $('.ui-progressbar-value');
                 ttlbar.hide();
                 $(this).css({height: 'auto', padding: 1, overflow: 'hidden'})
-                if(stgs.progressMessage){
-                    $(this).append($('<span>').addClass('ui-progressbar-msg').html(stgs.progressMessage).css({margin: '1px', fontSize: '.75em'}));
+                if(stgs.progress.message){
+                    var pmsg = $('<div>').addClass('progress-label').html(stgs.progress.message).css({fontSize: '.75em'});
+                    switch(stgs.progress.loc){
+                        case 'top':
+                            pmsg.css({margin: '1px'});
+                            $(this).append(pmsg);
+                            break;
+                        default:
+                            pmsg.css({position: 'absolute',left: '50%', top: '1px', fontWeight: 'bold',textShadow: '1px 1px 0 ' + stgs.progress.shadow ? '#fff':''});
+                            pbar.append(pmsg);
+                            break;
+                    }
                 }
                 $(this).append(pbar);
                 pbarval.css('margin', '-2px');
                 if (!$.support.htmlSerialize){
-                    pbarval.css('height', (stgs.height + 5) + 'px')
+                    pbarval.css('height', (stgs.dimensions.height.val + 5) + 'px')
                 }
                 $('.ui-dialog .ui-widget-content').css('border-width', '0px');
-                if(stgs.progressValue != false){
-                    fillProgressBar(stgs.progressValue);
+                if(stgs.progress.value !== false){
+                    fillProgressBar({val:stgs.progress.value});
                 }
             }else{
                 $(this).hide();
             }
             if (stgs.animated && stgs.style != 'progressbar') {
-                stgs.progressMax = stgs.message.length + 3;
+                stgs.progress.max = stgs.message.length + 3;
                 if(stgs.spell){
                     $('.ui-dialog-title').html(stgs.message.substring(0,1));
                 }
@@ -150,7 +172,7 @@
                     if (!spellmsg) {
                         clearInterval(_interval);
                     } else {
-                        if (spellmsg.length < (stgs.message.length + (stgs.progressMax - stgs.message.length))) {
+                        if (spellmsg.length < (stgs.message.length + (stgs.progress.max - stgs.message.length))) {
                             if (stgs.spell && stgs.animated) {
                                 if (spelllen < stgs.message.length) {
                                     spellmsg += stgs.message.substring(spelllen, spelllen+1);
@@ -167,7 +189,7 @@
                         }
                         $('.ui-dialog-title').html(spellmsg);
                     }
-                }, stgs.progressDelay);
+                }, stgs.progress.delay);
             };
             $('.ui-widget-overlay').css('position', 'fixed');
         })
