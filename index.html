@@ -7,16 +7,15 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <link href="theme/jquery.theme.css" type="text/css" rel="stylesheet" />
     <link href="prism.css" type="text/css" rel="stylesheet" />
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <title>fogLoader </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="jquery.themeswitcher.min.js"></script>
-    <script src="jquery.fogLoader.1.0.0.js" type="text/javascript"></script>
+    <script src="jquery.fogLoader.1.1.0.js" type="text/javascript"></script>
     <style>
       #switcher li{
         list-style: none !important;
@@ -44,7 +43,7 @@
         <section id="main_content">
           <p>fogLoader is an easy to use modal ajax loader that works with your existing jQuery theme</p>
           <p>
-             You will need a reference to jQuery 1.10 and jQueryUI 1.10.3, plus your theme.
+             You will need a reference to jQuery 1.10.2 and jQueryUI 1.10.4, plus your theme. jQueryUI 1.10.3 will work however not all progress bar functions will be supported.
           </p>
           <p>
             Add a div prefereably at the top of your HTML page. Instantiate fogLoader inside an event
@@ -115,9 +114,9 @@
 });
 // this could also be put inside an ajax callback
 myintervalid = setInterval(function() {
-  $('#myLoader').fogLoader('updateProgress', myprogresscounter);
+  $('#myLoader').fogLoader('updateProgress', {value: myprogresscounter});
   myprogresscounter++;
-  if($('#myLoader').fogLoader('progressValue') >= 100){
+  if($('#myLoader').fogLoader('progressValue') > 100){
     $('#myLoader').fogLoader('close');
     clearInterval(myintervalid);
     myprogresscounter = 1;
@@ -129,17 +128,41 @@ myintervalid = setInterval(function() {
               <br/>
               <pre class="language-javascript"><code>$('#myLoader').fogLoader({
   style: 'progressbar',
-  progressMessage: 'Saving item' + myprogresscounter + ' to the cloud'
+  progress: {message: 'Saving item' + myprogresscounter + ' to the cloud', loc: 'top'}
 });
 // this could also be put inside an ajax callback
 myintervalid = setInterval(function() {
   $('#myLoader').fogLoader('updateProgress',
   {
-    val:myprogresscounter,
+    value:myprogresscounter,
     msg: 'Saving item'+myprogresscounter+ ' to the cloud'
   });
   myprogresscounter++;
-  if($('#myLoader').fogLoader('progressValue') >= 100){
+  if($('#myLoader').fogLoader('progressValue') > 100){
+    $('#myLoader').fogLoader('close');
+    clearInterval(myintervalid);
+    myprogresscounter = 1;
+    }
+}, 50);</code></pre>
+            </div>
+            <div>
+              <button class="ui-button" onclick="runLoader('progressmsginline');">Progress Message Inline</button>
+              <br />
+              <span style="font-size: smaller; padding: .5em; margin-top: 5px" class="ui-state-highlight ui-corner-all">* note this only works with jQueryUI 1.10.4</span>
+              <br/>
+              <pre class="language-javascript"><code>$('#myLoader').fogLoader({
+  style: 'progressbar',
+  progress: {message: 'myprogresscounter + '%'}
+});
+// this could also be put inside an ajax callback
+myintervalid = setInterval(function() {
+  $('#myLoader').fogLoader('updateProgress',
+  {
+    value:myprogresscounter,
+    msg: myprogresscounter + '%'
+  });
+  myprogresscounter++;
+  if($('#myLoader').fogLoader('progressValue') > 100){
     $('#myLoader').fogLoader('close');
     clearInterval(myintervalid);
     myprogresscounter = 1;
@@ -151,7 +174,7 @@ myintervalid = setInterval(function() {
               <br />
               <pre class="language-javascript"><code>$('#myLoader').fogLoader({
   style: 'progressbar',
-  progressValue: false // set the progressValue to false.
+  progress: {value: false} // set the progressValue to false.
   //Same as the jQueryUI progressbar for indetermenate bars
 });</code></pre>
             </div>
@@ -225,9 +248,9 @@ myintervalid = setInterval(function() {
                   style: 'progressbar'
                });
                _interval = setInterval(function() {
-                              $('#loader').fogLoader('updateProgress', {val: _prog});
+                              $('#loader').fogLoader('updateProgress', {value: _prog});
                               _prog++;
-                              if($('#loader').fogLoader('progressValue') >= 100){
+                              if($('#loader').fogLoader('progressValue') > 100){
                                  $('#loader').fogLoader('close');
                                  clearInterval(_interval);
                                  _prog = 1;
@@ -237,13 +260,29 @@ myintervalid = setInterval(function() {
                auto = false;
                $('#loader').fogLoader({
                   style: 'progressbar',
-                  progressMessage: 'Saving Item'+ _prog + ' to the cloud',
+                  progress: {message: 'Saving Item'+ _prog + ' to the cloud', loc: 'top'},
                   width: 250
                });
                _interval = setInterval(function() {
-                              $('#loader').fogLoader('updateProgress', {val: _prog, msg: 'Saving item'+_prog+' to the cloud' });
+                              $('#loader').fogLoader('updateProgress', {value: _prog, msg: 'Saving item'+_prog+' to the cloud' });
                               _prog++;
-                              if($('#loader').fogLoader('progressValue') >= 100){
+                              if($('#loader').fogLoader('progressValue') > 100){
+                                 $('#loader').fogLoader('close');
+                                 clearInterval(_interval);
+                                 _prog = 1;
+                              }}, 50);
+               break;
+            case 'progressmsginline':
+               auto = false;
+               $('#loader').fogLoader({
+                  style: 'progressbar',
+                  progress: {message: _prog + '%'},
+                  width: 250
+               });
+               _interval = setInterval(function() {
+                              $('#loader').fogLoader('updateProgress', {value: _prog, msg: _prog+'%' });
+                              _prog++;
+                              if($('#loader').fogLoader('progressValue') > 100){
                                  $('#loader').fogLoader('close');
                                  clearInterval(_interval);
                                  _prog = 1;
@@ -253,7 +292,7 @@ myintervalid = setInterval(function() {
                auto = true;
                $('#loader').fogLoader({
                   style: 'progressbar',
-                  progressValue: false
+                  progress: {value: false}
                });
                break;
             default:
