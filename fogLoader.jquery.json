@@ -1,7 +1,7 @@
 {
   "name": "fogLoader",
-  "description": "fogLoader is an ajax modal loader for jQuery themes",
-  "version": "1.1.0",
+  "description": "Ajax modal loader for supporting jQuery themes",
+  "version": "1.1.1",
   "licenses": [
     {
       "type": "GPL",
@@ -14,7 +14,8 @@
     "ajax",
     "loader",
     "progress",
-    "ui"
+    "ui",
+	"themes"
   ],
   "author": {
     "url": "http://turgeson.github.io/fogLoader/",
