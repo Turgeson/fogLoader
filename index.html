@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery.theme.css" />
+    <link id="theme" rel="stylesheet" type="text/css" href="css/ui-lightness/jquery.theme.css" />
     <link href="prism.css" type="text/css" rel="stylesheet" />
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -15,7 +15,7 @@
     <title>fogLoader </title>
     <script src="http://code.jquery.com/jquery-1.10.2.js" type="text/javascript"></script>
     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js" type="text/javascript"></script>
-    <script src="jquery.fogLoader.1.1.0.js" type="text/javascript"></script>
+    <script src="jquery.fogLoader.1.1.1.js" type="text/javascript"></script>
  </head>
  <body>
     <div id="loader"></div>
@@ -45,6 +45,11 @@
             <div id="switcher"></div>
           </p>
           <h3>Demo</h3>
+          <h4>Theme</h4>
+          <input type="radio" id="LightTheme" name="Theme" checked value='light' /><label for="LightTheme">Light</label>
+          <input type="radio" id="DarkTheme" name="Theme" value='dark' /><label for="DarkTheme">Dark</label>
+          <input type="radio" id="GreenTheme" name="Theme" value='green' /><label for="GreenTheme">Green</label>
+          <input type="radio" id="ChocolateTheme" name="Theme" value='chocolate' /><label for="ChocolateTheme">Chocolate</label>
       <div>
         <div id="tabs">
           <ul>
@@ -116,10 +121,15 @@ myintervalid = setInterval(function() {
             </div>
             <div>
               <button class="ui-button" onclick="runLoader('progressmsg');">Progress Message</button>
+              <label for="MessagePosition">Text Position</label>
+              <select id="MessagePosition">
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+              </select>
               <br/>
               <pre class="language-javascript"><code>$('#myLoader').fogLoader({
   style: 'progressbar',
-  progress: {message: 'Saving item' + myprogresscounter + ' to the cloud', loc: 'top'}
+  progress: {message: 'Saving item' + myprogresscounter + ' to the cloud', loc: $('#MessagePosition option:selected').val()}
 });
 // this could also be put inside an ajax callback
 myintervalid = setInterval(function() {
@@ -186,6 +196,12 @@ myintervalid = setInterval(function() {
       
       $('#tabs').tabs();
       
+      $('input[type=radio]').on('mousedown',
+          function(){
+            $("#theme").attr({href : 'css/ui-'+ $(this).val() +'ness/jquery.theme.css'});  
+          }
+      );
+      
       var _interval;
       var _prog = 1;
       var auto = true;
@@ -247,7 +263,7 @@ myintervalid = setInterval(function() {
                auto = false;
                $('#loader').fogLoader({
                   style: 'progressbar',
-                  progress: {message: 'Saving Item'+ _prog + ' to the cloud', loc: 'top'},
+                  progress: {message: 'Saving Item'+ _prog + ' to the cloud', loc: $('#MessagePosition option:selected').val()},
                   width: 250
                });
                _interval = setInterval(function() {
