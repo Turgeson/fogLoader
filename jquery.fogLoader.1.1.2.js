@@ -1,7 +1,7 @@
 /*
  * fogLoader, an ajax modal loader supporting jQuery UI themes
  * by Corbin Camp - ccamp@onebox.com @corbincamp
- * Version 1.1.1
+ * Version 1.1.2
  * Created 2014
  * License: GPL
  * 
@@ -156,7 +156,7 @@
                 }
                 pbarval.css('margin', '-2px');
                 if (!$.support.htmlSerialize){
-                    pbarval.css('height', (stgs.dimensions.height.val + 5) + 'px');
+                    pbarval.css('height', (stgs.height + 5) + 'px');
                 }
                 $('.ui-dialog .ui-widget-content').css('border-width', '0px');
                 if(stgs.progress.value !== false){
